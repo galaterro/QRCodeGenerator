@@ -1,12 +1,26 @@
 'use client'
 
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useRef, useCallback } from 'react'
 import { QRCodeCanvas } from 'qrcode.react'
 import { HexColorPicker } from 'react-colorful'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { ChevronUp, ChevronDown, Download } from 'lucide-react'
+
+function hexToRgb(hex: string) {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+  return result ? {
+    r: parseInt(result[1], 16),
+    g: parseInt(result[2], 16),
+    b: parseInt(result[3], 16)
+  } : null
+}
+
+function rgbToHex(r: number, g: number, b: number) {
+  return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)
+}
 
 export default function QRGenerator() {
   const [text, setText] = useState('')
@@ -15,6 +29,16 @@ export default function QRGenerator() {
   const [size, setSize] = useState(128)
   const [downloadStatus, setDownloadStatus] = useState('')
   const qrRef = useRef<HTMLDivElement>(null)
+
+  const rgb = hexToRgb(color)
+
+  const handleRgbChange = useCallback((component: 'r' | 'g' | 'b', value: string) => {
+    const numValue = parseInt(value, 10)
+    if (isNaN(numValue) || numValue < 0 || numValue > 255) return
+
+    const newRgb = { ...rgb, [component]: numValue }
+    setColor(rgbToHex(newRgb.r, newRgb.g, newRgb.b))
+  }, [rgb])
 
   const generateQR = () => {
     setQrCode(text)
@@ -67,7 +91,48 @@ export default function QRGenerator() {
 
       <div className="space-y-2">
         <Label>Color del QR</Label>
-        <HexColorPicker color={color} onChange={setColor} />
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="outline" className="w-full justify-between">
+              Color
+              <div
+                className="w-4 h-4 rounded-full"
+                style={{ backgroundColor: color }}
+              />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-80">
+            <div className="flex space-x-4">
+              <HexColorPicker color={color} onChange={setColor} className="w-48" />
+              <div className="space-y-2 flex-1">
+                <Label htmlFor="hex-color">HEX</Label>
+                <Input
+                  id="hex-color"
+                  value={color}
+                  onChange={(e) => setColor(e.target.value)}
+                />
+                <Label htmlFor="r-color">R</Label>
+                <Input
+                  id="r-color"
+                  value={rgb?.r}
+                  onChange={(e) => handleRgbChange('r', e.target.value)}
+                />
+                <Label htmlFor="g-color">G</Label>
+                <Input
+                  id="g-color"
+                  value={rgb?.g}
+                  onChange={(e) => handleRgbChange('g', e.target.value)}
+                />
+                <Label htmlFor="b-color">B</Label>
+                <Input
+                  id="b-color"
+                  value={rgb?.b}
+                  onChange={(e) => handleRgbChange('b', e.target.value)}
+                />
+              </div>
+            </div>
+          </PopoverContent>
+        </Popover>
       </div>
 
       <Button onClick={generateQR} className="w-full">Generar QR</Button>
