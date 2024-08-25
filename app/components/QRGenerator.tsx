@@ -9,16 +9,18 @@ import { Label } from '@/components/ui/label'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { ChevronUp, ChevronDown, Download } from 'lucide-react'
 
-function hexToRgb(hex: string) {
+function hexToRgb(hex: string): { r: number; g: number; b: number } {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
-  return result ? {
-    r: parseInt(result[1], 16),
-    g: parseInt(result[2], 16),
-    b: parseInt(result[3], 16)
-  } : null
+  return result
+    ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+      }
+    : { r: 0, g: 0, b: 0 } // Default to black if parsing fails
 }
 
-function rgbToHex(r: number, g: number, b: number) {
+function rgbToHex(r: number, g: number, b: number): string {
   return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)
 }
 
@@ -114,19 +116,19 @@ export default function QRGenerator() {
                 <Label htmlFor="r-color">R</Label>
                 <Input
                   id="r-color"
-                  value={rgb?.r}
+                  value={rgb.r}
                   onChange={(e) => handleRgbChange('r', e.target.value)}
                 />
                 <Label htmlFor="g-color">G</Label>
                 <Input
                   id="g-color"
-                  value={rgb?.g}
+                  value={rgb.g}
                   onChange={(e) => handleRgbChange('g', e.target.value)}
                 />
                 <Label htmlFor="b-color">B</Label>
                 <Input
                   id="b-color"
-                  value={rgb?.b}
+                  value={rgb.b}
                   onChange={(e) => handleRgbChange('b', e.target.value)}
                 />
               </div>
