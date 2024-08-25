@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useRef } from 'react'
-import { QRCodeSVG } from 'qrcode.react'
+import React, { useState, useEffect, useRef } from 'react'
+import { QRCodeCanvas } from 'qrcode.react'
 import { HexColorPicker } from 'react-colorful'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -14,7 +14,7 @@ export default function QRGenerator() {
   const [color, setColor] = useState('#000000')
   const [size, setSize] = useState(128)
   const [downloadStatus, setDownloadStatus] = useState('')
-  const qrRef = useRef<SVGSVGElement | null>(null)
+  const qrRef = useRef<HTMLDivElement>(null)
 
   const generateQR = () => {
     setQrCode(text)
@@ -29,40 +29,28 @@ export default function QRGenerator() {
   }
 
   const downloadQR = () => {
-    if (!qrRef.current) {
+    if (!qrRef.current || !qrCode) {
       setDownloadStatus('Error: No se pudo generar la imagen')
       return
     }
 
     setDownloadStatus('Preparando la descarga...')
 
-    const canvas = document.createElement('canvas')
-    const svg = qrRef.current
-    const svgData = new XMLSerializer().serializeToString(svg)
-    const img = new Image()
-
-    img.onload = () => {
-      canvas.width = size
-      canvas.height = size
-      const ctx = canvas.getContext('2d')
-      if (ctx) {
-        ctx.drawImage(img, 0, 0)
-        const pngFile = canvas.toDataURL('image/png')
-        const downloadLink = document.createElement('a')
-        downloadLink.download = 'qrcode.png'
-        downloadLink.href = pngFile
-        downloadLink.click()
-        setDownloadStatus('Descarga completada')
-      } else {
-        setDownloadStatus('Error: No se pudo crear el contexto del canvas')
-      }
+    const canvas = qrRef.current.querySelector('canvas')
+    if (!canvas) {
+      setDownloadStatus('Error: No se pudo encontrar el canvas')
+      return
     }
 
-    img.onerror = () => {
-      setDownloadStatus('Error: No se pudo cargar la imagen')
-    }
+    const image = canvas.toDataURL('image/png')
+    const link = document.createElement('a')
+    link.href = image
+    link.download = 'qrcode.png'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
 
-    img.src = 'data:image/svg+xml;base64,' + btoa(svgData)
+    setDownloadStatus('Descarga completada')
   }
 
   return (
@@ -86,12 +74,13 @@ export default function QRGenerator() {
 
       {qrCode && (
         <div className="space-y-4">
-          <div className="flex justify-center">
-            <QRCodeSVG
+          <div className="flex justify-center" ref={qrRef}>
+            <QRCodeCanvas
               value={qrCode}
               size={size}
               fgColor={color}
-              ref={qrRef}
+              level="H"
+              includeMargin={true}
             />
           </div>
 
