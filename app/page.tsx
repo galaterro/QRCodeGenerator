@@ -18,7 +18,7 @@ export default function Home() {
   }, [darkMode])
 
   return (
-    <div className={`min-h-screen bg-background text-foreground ${darkMode ? 'dark' : ''}`}>
+    <div className={`min-h-screen flex flex-col bg-background text-foreground ${darkMode ? 'dark' : ''}`}>
       <header className="flex justify-between items-center p-4 border-b">
         <div className="flex items-center space-x-2">
           <Image
@@ -38,7 +38,7 @@ export default function Home() {
           {darkMode ? <Sun className="h-6 w-6" /> : <Moon className="h-6 w-6" />}
         </Button>
       </header>
-      <main className="flex flex-col items-center justify-center p-8">
+      <main className="flex-grow flex flex-col items-center justify-center p-8">
         <QRGenerator />
       </main>
       <footer className="text-center p-4 border-t">
