@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import QRGenerator from '@/components/QRGenerator'
+import QRGenerator from '@/app/components/QRGenerator'
 import { Button } from '@/components/ui/button'
 import { Moon, Sun } from 'lucide-react'
 import Image from 'next/image'
