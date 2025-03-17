@@ -1,13 +1,14 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import QRGenerator from '@/app/components/QRGenerator'
+import QRGenerator from '@/components/QRGenerator'
 import { Button } from '@/components/ui/button'
 import { Moon, Sun } from 'lucide-react'
 import Image from 'next/image'
 
 export default function Home() {
   const [darkMode, setDarkMode] = useState(false)
+  const currentYear = new Date().getFullYear()
 
   useEffect(() => {
     if (darkMode) {
@@ -42,7 +43,7 @@ export default function Home() {
         <QRGenerator />
       </main>
       <footer className="text-center p-4 border-t">
-        <p>&copy; 2023 QR Code Generator. All rights reserved.</p>
+        <p>&copy; {currentYear} QR Code Generator. All rights reserved.</p>
       </footer>
     </div>
   )
