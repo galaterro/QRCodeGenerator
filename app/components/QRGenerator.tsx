@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useRef, useCallback } from 'react'
+import React, { useState, useRef, useCallback, useEffect } from 'react'
 import { QRCodeCanvas } from 'qrcode.react'
 import { HexColorPicker } from 'react-colorful'
 import { Button } from '@/components/ui/button'
@@ -30,7 +30,19 @@ export default function QRGenerator() {
   const [color, setColor] = useState('#000000')
   const [size, setSize] = useState(128)
   const [downloadStatus, setDownloadStatus] = useState('')
+  const [isMobile, setIsMobile] = useState(false)
   const qrRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth < 1066)
+    }
+    
+    checkIfMobile()
+    window.addEventListener('resize', checkIfMobile)
+    
+    return () => window.removeEventListener('resize', checkIfMobile)
+  }, [])
 
   const rgb = hexToRgb(color)
 
@@ -103,9 +115,18 @@ export default function QRGenerator() {
               />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-80" side="left" align="start">
-            <div className="flex space-x-4">
-              <HexColorPicker color={color} onChange={setColor} className="w-48" />
+          <PopoverContent 
+            className={`${isMobile ? 'w-[calc(100vw-2rem)] max-w-[20rem]' : 'w-80'}`}
+            side={isMobile ? "bottom" : "left"}
+            align={isMobile ? "center" : "start"}
+            sideOffset={isMobile ? 5 : 10}
+          >
+            <div className={`flex ${isMobile ? 'flex-col' : 'space-x-4'}`}>
+              <HexColorPicker 
+                color={color} 
+                onChange={setColor} 
+                className={`${isMobile ? 'w-full mb-4' : 'w-48'}`} 
+              />
               <div className="space-y-2 flex-1">
                 <Label htmlFor="hex-color">HEX</Label>
                 <Input
