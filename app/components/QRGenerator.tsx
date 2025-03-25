@@ -103,7 +103,7 @@ export default function QRGenerator() {
               />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-80">
+          <PopoverContent className="w-80" side="left" align="start">
             <div className="flex space-x-4">
               <HexColorPicker color={color} onChange={setColor} className="w-48" />
               <div className="space-y-2 flex-1">
