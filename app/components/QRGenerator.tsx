@@ -28,6 +28,7 @@ export default function QRGenerator() {
   const [text, setText] = useState('')
   const [qrCode, setQrCode] = useState('')
   const [color, setColor] = useState('#000000')
+  const [backgroundColor, setBackgroundColor] = useState('#ffffff')
   const [size, setSize] = useState(128)
   const [downloadStatus, setDownloadStatus] = useState('')
   const [isMobile, setIsMobile] = useState(false)
@@ -45,6 +46,7 @@ export default function QRGenerator() {
   }, [])
 
   const rgb = hexToRgb(color)
+  const backgroundRgb = hexToRgb(backgroundColor)
 
   const handleRgbChange = useCallback((component: 'r' | 'g' | 'b', value: string) => {
     const numValue = parseInt(value, 10)
@@ -53,6 +55,14 @@ export default function QRGenerator() {
     const newRgb = { ...rgb, [component]: numValue }
     setColor(rgbToHex(newRgb.r, newRgb.g, newRgb.b))
   }, [rgb])
+
+  const handleBackgroundRgbChange = useCallback((component: 'r' | 'g' | 'b', value: string) => {
+    const numValue = parseInt(value, 10)
+    if (isNaN(numValue) || numValue < 0 || numValue > 255) return
+
+    const newRgb = { ...backgroundRgb, [component]: numValue }
+    setBackgroundColor(rgbToHex(newRgb.r, newRgb.g, newRgb.b))
+  }, [backgroundRgb])
 
   const generateQR = () => {
     setQrCode(text)
@@ -158,6 +168,61 @@ export default function QRGenerator() {
         </Popover>
       </div>
 
+      <div className="space-y-2">
+        <Label>Color de fondo</Label>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="outline" className="w-full justify-between">
+              Fondo
+              <div
+                className="w-4 h-4 rounded-full border"
+                style={{ backgroundColor: backgroundColor }}
+              />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent 
+            className={`${isMobile ? 'w-[calc(100vw-2rem)] max-w-[20rem]' : 'w-80'}`}
+            side={isMobile ? "bottom" : "left"}
+            align={isMobile ? "center" : "start"}
+            sideOffset={isMobile ? 5 : 10}
+          >
+            <div className={`flex ${isMobile ? 'flex-col' : 'space-x-4'}`}>
+              <HexColorPicker 
+                color={backgroundColor} 
+                onChange={setBackgroundColor} 
+                className={`${isMobile ? 'w-full mb-4' : 'w-48'}`} 
+              />
+              <div className="space-y-2 flex-1">
+                <Label htmlFor="hex-bg-color">HEX</Label>
+                <Input
+                  id="hex-bg-color"
+                  value={backgroundColor}
+                  onChange={(e) => setBackgroundColor(e.target.value)}
+                />
+                <Label htmlFor="r-bg-color">R</Label>
+                <Input
+                  id="r-bg-color"
+                  value={backgroundRgb.r}
+                  onChange={(e) => handleBackgroundRgbChange('r', e.target.value)}
+                />
+                <Label htmlFor="g-bg-color">G</Label>
+                <Input
+                  id="g-bg-color"
+                  value={backgroundRgb.g}
+                  onChange={(e) => handleBackgroundRgbChange('g', e.target.value)}
+                />
+                <Label htmlFor="b-bg-color">B</Label>
+                <Input
+                  id="b-bg-color"
+                  value={backgroundRgb.b}
+                  onChange={(e) => handleBackgroundRgbChange('b', e.target.value)}
+                />
+              </div>
+            </div>
+          </PopoverContent>
+        </Popover>
+      </div>
+
       <Button onClick={generateQR} className="w-full">Generar QR</Button>
 
       {qrCode && (
@@ -167,6 +232,7 @@ export default function QRGenerator() {
               value={qrCode}
               size={size}
               fgColor={color}
+              bgColor={backgroundColor}
               level="H"
               includeMargin={true}
             />
