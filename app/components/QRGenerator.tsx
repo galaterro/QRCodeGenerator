@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { ChevronUp, ChevronDown, Download, Link2, Mail, Phone, Wifi, MapPin, User } from 'lucide-react'
+import { ChevronUp, ChevronDown, Download } from 'lucide-react'
 
 type QRType = 'text' | 'url' | 'email' | 'phone' | 'sms' | 'wifi' | 'location' | 'vcard'
 
