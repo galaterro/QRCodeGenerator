@@ -107,7 +107,7 @@ export default function QRGenerator() {
       
       // Incrementar contador global
       // Note: This has a potential race condition with rapid clicks or multiple tabs.
-      // For a production app, consider using a more robust solution like IndexedDB with atomic operations.
+      // For a production app, consider using server-side state management or a debouncing strategy.
       if (typeof window !== 'undefined') {
         const currentCount = parseInt(localStorage.getItem(QR_COUNT_STORAGE_KEY) || '0', 10)
         const newCount = currentCount + 1
