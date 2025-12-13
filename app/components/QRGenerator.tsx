@@ -108,12 +108,14 @@ export default function QRGenerator() {
       // Incrementar contador global
       // Note: This has a potential race condition with rapid clicks or multiple tabs.
       // For a production app, consider using a more robust solution like IndexedDB with atomic operations.
-      const currentCount = parseInt(localStorage.getItem(QR_COUNT_STORAGE_KEY) || '0', 10)
-      const newCount = currentCount + 1
-      localStorage.setItem(QR_COUNT_STORAGE_KEY, String(newCount))
-      
-      // Emitir evento personalizado para actualizar el contador en el hero, pasando el nuevo contador en detail
-      window.dispatchEvent(new CustomEvent('qrGenerated', { detail: { count: newCount } }))
+      if (typeof window !== 'undefined') {
+        const currentCount = parseInt(localStorage.getItem(QR_COUNT_STORAGE_KEY) || '0', 10)
+        const newCount = currentCount + 1
+        localStorage.setItem(QR_COUNT_STORAGE_KEY, String(newCount))
+        
+        // Emitir evento personalizado para actualizar el contador en el hero, pasando el nuevo contador en detail
+        window.dispatchEvent(new CustomEvent('qrGenerated', { detail: { count: newCount } }))
+      }
     }
   }
 
