@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { ChevronUp, ChevronDown, Download } from 'lucide-react'
+import { QR_COUNT_STORAGE_KEY } from '@/lib/constants'
 
 type QRType = 'text' | 'url' | 'email' | 'phone' | 'sms' | 'wifi' | 'location' | 'vcard'
 
@@ -105,11 +106,14 @@ export default function QRGenerator() {
       setQrCode(content)
       
       // Incrementar contador global
-      const currentCount = parseInt(localStorage.getItem('qrGeneratedCount') || '0', 10)
-      localStorage.setItem('qrGeneratedCount', String(currentCount + 1))
+      // Note: This has a potential race condition with rapid clicks or multiple tabs.
+      // For a production app, consider using a more robust solution like IndexedDB with atomic operations.
+      const currentCount = parseInt(localStorage.getItem(QR_COUNT_STORAGE_KEY) || '0', 10)
+      const newCount = currentCount + 1
+      localStorage.setItem(QR_COUNT_STORAGE_KEY, String(newCount))
       
-      // Emitir evento personalizado para actualizar el contador en el hero
-      window.dispatchEvent(new Event('qrGenerated'))
+      // Emitir evento personalizado para actualizar el contador en el hero, pasando el nuevo contador en detail
+      window.dispatchEvent(new CustomEvent('qrGenerated', { detail: { count: newCount } }))
     }
   }
 
