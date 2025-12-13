@@ -5,14 +5,15 @@ import QRGenerator from '@/app/components/QRGenerator'
 import { Button } from '@/components/ui/button'
 import { Moon, Sun, Zap, Grid3x3, UserX } from 'lucide-react'
 import Image from 'next/image'
+import { BASE_QR_COUNT, QR_COUNT_STORAGE_KEY } from '@/lib/constants'
 
 // Custom hook para animar el contador
 function useCountUp(target: number, duration: number = 2000) {
   const [count, setCount] = useState(0)
+  const animationFrameRef = useRef<number | undefined>(undefined)
 
   useEffect(() => {
     let startTime: number | null = null
-    let animationFrame: number
 
     const animate = (currentTime: number) => {
       if (!startTime) startTime = currentTime
@@ -21,12 +22,16 @@ function useCountUp(target: number, duration: number = 2000) {
       setCount(Math.floor(progress * target))
       
       if (progress < 1) {
-        animationFrame = requestAnimationFrame(animate)
+        animationFrameRef.current = requestAnimationFrame(animate)
       }
     }
 
-    animationFrame = requestAnimationFrame(animate)
-    return () => cancelAnimationFrame(animationFrame)
+    animationFrameRef.current = requestAnimationFrame(animate)
+    return () => {
+      if (animationFrameRef.current !== undefined) {
+        cancelAnimationFrame(animationFrameRef.current)
+      }
+    }
   }, [target, duration])
 
   return count
@@ -34,7 +39,7 @@ function useCountUp(target: number, duration: number = 2000) {
 
 export default function Home() {
   const [darkMode, setDarkMode] = useState(false)
-  const [totalQRs, setTotalQRs] = useState(12500)
+  const [totalQRs, setTotalQRs] = useState(BASE_QR_COUNT)
   const qrGeneratorRef = useRef<HTMLDivElement>(null)
   const animatedCount = useCountUp(totalQRs, 2000)
   const currentYear = new Date().getFullYear()
@@ -49,16 +54,23 @@ export default function Home() {
 
   // Cargar contador desde localStorage
   useEffect(() => {
-    const baseCount = 12500
-    const sessionCount = parseInt(localStorage.getItem('qrGeneratedCount') || '0', 10)
-    setTotalQRs(baseCount + sessionCount)
+    if (typeof window !== 'undefined') {
+      const sessionCount = parseInt(localStorage.getItem(QR_COUNT_STORAGE_KEY) || '0', 10)
+      setTotalQRs(BASE_QR_COUNT + sessionCount)
+    }
   }, [])
 
   // Escuchar evento de nuevo QR generado
   useEffect(() => {
-    const handleQRGenerated = () => {
-      const sessionCount = parseInt(localStorage.getItem('qrGeneratedCount') || '0', 10)
-      setTotalQRs(12500 + sessionCount)
+    if (typeof window === 'undefined') return
+
+    const handleQRGenerated = (event: Event) => {
+      // Use the count from event.detail if available, otherwise fallback to localStorage
+      const sessionCount =
+        (event instanceof CustomEvent && typeof event.detail?.count === 'number')
+          ? event.detail.count
+          : parseInt(localStorage.getItem(QR_COUNT_STORAGE_KEY) || '0', 10)
+      setTotalQRs(BASE_QR_COUNT + sessionCount)
     }
 
     window.addEventListener('qrGenerated', handleQRGenerated)
