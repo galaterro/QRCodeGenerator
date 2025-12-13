@@ -103,6 +103,13 @@ export default function QRGenerator() {
     const content = generateQRContent()
     if (content.trim()) {
       setQrCode(content)
+      
+      // Incrementar contador global
+      const currentCount = parseInt(localStorage.getItem('qrGeneratedCount') || '0', 10)
+      localStorage.setItem('qrGeneratedCount', String(currentCount + 1))
+      
+      // Emitir evento personalizado para actualizar el contador en el hero
+      window.dispatchEvent(new Event('qrGenerated'))
     }
   }
 
