@@ -10,6 +10,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { ChevronUp, ChevronDown, Download } from 'lucide-react'
 import { QR_COUNT_STORAGE_KEY } from '@/lib/constants'
+import { event as trackEvent } from '@/lib/gtag'
 
 type QRType = 'text' | 'url' | 'email' | 'phone' | 'sms' | 'wifi' | 'location' | 'vcard'
 
@@ -104,7 +105,8 @@ export default function QRGenerator() {
     const content = generateQRContent()
     if (content.trim()) {
       setQrCode(content)
-      
+      trackEvent('generate_qr', { qr_type: qrType })
+
       // Incrementar contador global
       // Note: This has a potential race condition with rapid clicks or multiple tabs.
       // For a production app, consider using server-side state management or a debouncing strategy.
