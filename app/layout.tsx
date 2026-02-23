@@ -29,7 +29,8 @@ export default function RootLayout({
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', '${GA_MEASUREMENT_ID}');
+            var debugMode = new URLSearchParams(window.location.search).get('debug_mode') === '1';
+            gtag('config', '${GA_MEASUREMENT_ID}', debugMode ? { debug_mode: true } : {});
           `}
         </Script>
         {children}
