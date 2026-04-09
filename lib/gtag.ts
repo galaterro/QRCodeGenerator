@@ -1,4 +1,5 @@
 export const GA_MEASUREMENT_ID = 'G-XE74T3CCXV'
+export const GTM_ID = 'GTM-W5245GTV'
 
 declare global {
   interface Window {
@@ -12,7 +13,8 @@ declare global {
 }
 
 export function event(action: string, params?: Record<string, unknown>): void {
-  if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
-    window.gtag('event', action, params)
+  if (typeof window !== 'undefined') {
+    window.dataLayer = window.dataLayer || []
+    window.dataLayer.push({ event: action, ...params })
   }
 }
