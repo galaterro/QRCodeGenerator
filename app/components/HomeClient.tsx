@@ -80,7 +80,7 @@ export default function HomeClient() {
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       <header className="sticky top-0 z-20 flex justify-between items-center px-6 py-4 border-b border-border/60 bg-background/80 backdrop-blur-md">
         <div className="flex items-center gap-3">
-          <Image src="/qr-code-logo.svg" alt="Generador de Códigos QR" width={34} height={34} />
+          <Image src="/logo-new.png" alt="Generador de Códigos QR" width={34} height={34} />
           <span className="font-syne text-lg font-bold tracking-tight">QR Code Generator</span>
         </div>
         <Button

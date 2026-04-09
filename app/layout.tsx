@@ -45,9 +45,9 @@ export const metadata: Metadata = {
     description: 'Crea códigos QR gratis y personalizados al instante. Sin registro, sin límites.',
   },
   icons: {
-    icon: '/qr-code-logo.svg',
-    shortcut: '/qr-code-logo.svg',
-    apple: '/qr-code-logo.svg',
+    icon: '/logo-new.png',
+    shortcut: '/logo-new.png',
+    apple: '/logo-new.png',
   },
 }
 

@@ -22,7 +22,7 @@ export default function PrivacidadClient() {
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       <header className="flex justify-between items-center p-4 border-b">
         <div className="flex items-center space-x-2">
-          <Image src="/qr-code-logo.svg" alt="Generador de Códigos QR" width={40} height={40} />
+          <Image src="/logo-new.png" alt="Generador de Códigos QR" width={40} height={40} />
           <span className="font-syne text-xl font-bold tracking-tight">QR Code Generator</span>
         </div>
         <Button
