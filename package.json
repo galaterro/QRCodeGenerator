@@ -36,5 +36,11 @@
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.18",
     "typescript": "^5.9.3"
+  },
+  "pnpm": {
+    "overrides": {
+      "picomatch@>=2 <3": "2.3.2",
+      "picomatch@>=4 <5": "4.0.4"
+    }
   }
 }
